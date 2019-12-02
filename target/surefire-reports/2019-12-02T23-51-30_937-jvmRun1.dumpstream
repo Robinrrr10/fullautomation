@@ -1,3 +1,0 @@
-# Created at 2019-12-02T23:51:34.443
-org.testng.ITestNGListener: Provider io.qameta.allure.testng.AllureTestNg could not be instantiated
-

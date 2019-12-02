@@ -1,6 +1,0 @@
-# Created at 2019-12-02T23:51:33.077
-[AppClassLoader@18b4aac2] error The specified aspect 'io.qameta.allure.aspects.StepsAspects' cannot be found
-
-# Created at 2019-12-02T23:51:33.078
-[AppClassLoader@18b4aac2] error The specified aspect 'io.qameta.allure.aspects.AttachmentsAspects' cannot be found
-

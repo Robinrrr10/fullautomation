@@ -46,23 +46,23 @@
 			<version>2.12.1</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/io.qameta.allure/allure-testng -->
-		<dependency>
+		
+		<!-- <dependency>
 			<groupId>io.qameta.allure</groupId>
 			<artifactId>allure-testng</artifactId>
 			<version>2.10.0</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/io.qameta.allure/allure-httpclient -->
+		
 		<dependency>
 			<groupId>io.qameta.allure</groupId>
 			<artifactId>allure-httpclient</artifactId>
 			<version>2.10.0</version>
-		</dependency>
+		</dependency>-->
 
 
 
 	</dependencies>
-
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -70,27 +70,29 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.0.0-M4</version>
 				<configuration>
-				<testFailureIgnore>true</testFailureIgnore>
+				<!--  <testFailureIgnore>true</testFailureIgnore>
 				<useSystemClassLoader>false</useSystemClassLoader>
 				<argLine>
 				-javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
-				</argLine>
+				</argLine>-->
+				
 				<suiteXmlFiles>
-					<suiteXmlFile>${suiteXmlFile}</suiteXmlFile>
-				</suiteXmlFiles>
+            			<suiteXmlFile>testng.xml</suiteXmlFile>
+          		</suiteXmlFiles>
 				</configuration>
-				<dependencies>
+				<!-- <dependencies>
 					<dependency>
 						<groupId>org.aspectj</groupId>
 						<artifactId>aspectjweaver</artifactId>
 						<version>${aspectj.version}</version>
 					</dependency>
 				</dependencies>
+				 -->
 			</plugin>
 		</plugins>
 	</build>
 
-	<reporting>
+	<!-- <reporting>
 		<excludeDefaults>true</excludeDefaults>
 		<plugins>
 			<plugin>
@@ -99,5 +101,6 @@
 				<version>2.10.0</version>
 			</plugin>
 		</plugins>
-	</reporting>
+	</reporting> -->
+	
 </project>
