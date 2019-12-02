@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" ignored="0" total="2" passed="2">
+  <reporter-output>
+  </reporter-output>
+  <suite name="com.github.fullautomation.AppTest" duration-ms="9665" started-at="2019-12-02T17:32:26Z" finished-at="2019-12-02T17:32:36Z">
+    <groups>
+    </groups>
+    <test name="Command line test" duration-ms="9665" started-at="2019-12-02T17:32:26Z" finished-at="2019-12-02T17:32:36Z">
+      <class name="com.github.fullautomation.AppTest">
+        <test-method status="PASS" signature="testApacheHttp()[pri:0, instance:com.github.fullautomation.AppTest@64cd705f]" name="testApacheHttp" duration-ms="3199" started-at="2019-12-02T17:32:26Z" finished-at="2019-12-02T17:32:29Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testApacheHttp -->
+        <test-method status="PASS" signature="testApacheHttpPost()[pri:0, instance:com.github.fullautomation.AppTest@64cd705f]" name="testApacheHttpPost" duration-ms="6423" started-at="2019-12-02T17:32:29Z" finished-at="2019-12-02T17:32:36Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testApacheHttpPost -->
+      </class> <!-- com.github.fullautomation.AppTest -->
+    </test> <!-- Command line test -->
+  </suite> <!-- com.github.fullautomation.AppTest -->
+</testng-results>
