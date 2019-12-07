@@ -12,9 +12,10 @@ import com.github.fullautomation.client.ApacheHttpClient;
 /**
  * Unit test for simple App.
  */
+
 public class AppTest 
 {
-	
+	//Listeners
 	Logger logger = LogManager.getLogger(getClass());
    
 	@Test
