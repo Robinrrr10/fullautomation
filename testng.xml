@@ -3,12 +3,10 @@
 <suite name="TestNGXMLTest Test Suite">
 	<test name="TestNGXMLTest Test">
 		<classes>
-<<<<<<< HEAD
-			<!-- <class name="com.github.fullautomation.AppTest" /> -->
+			<!-- <class name="com.github.fullautomation.AppTest" />
 			<class name="com.github.fullautomation.RestAssuredTest" />
-=======
-			<class name="com.github.fullautomation.uitest.SimpleLearnTest" />
->>>>>>> selenium
+			<class name="com.github.fullautomation.uitest.SimpleLearnTest" />-->
+			<class name="com.github.fullautomation.apitest.ApiClientTest" />
 		</classes>
 	</test>
 </suite>
