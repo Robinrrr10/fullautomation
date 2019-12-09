@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -231,7 +232,7 @@ public class ApiClient {
 	}
 
 
-	public File responseToFile(HttpResponse response, String filePath) throws UnsupportedOperationException, IOException {
+	public File responseAsFile(HttpResponse response, String filePath) throws UnsupportedOperationException, IOException {
 		File file = null;
 		InputStream inputStream = response.getEntity().getContent();
 		FileOutputStream fileOutpuStream = new FileOutputStream(new File(filePath));
@@ -240,6 +241,14 @@ public class ApiClient {
 			fileOutpuStream.write(inByte);
 		inputStream.close();
 		fileOutpuStream.close();
+		file = new File(filePath);
+		return file;
+	}
+	
+	public File responseAsFile_Method2(HttpResponse response, String filePath) throws UnsupportedOperationException, IOException {
+		File file = null;
+		InputStream inputStream = response.getEntity().getContent();
+		FileUtils.copyInputStreamToFile(inputStream, new File(filePath));
 		file = new File(filePath);
 		return file;
 	}
