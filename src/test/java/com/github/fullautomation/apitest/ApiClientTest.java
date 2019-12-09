@@ -13,6 +13,7 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fullautomation.client.ApiClient;
 import com.github.fullautomation.client.ApiClient.ApiMethod;
+import com.github.fullautomation.client.ApiClient.BodyType;
 import com.github.fullautomation.entries.User;
 
 public class ApiClientTest {
@@ -21,27 +22,37 @@ public class ApiClientTest {
 
 	ApiClient apiClient = new ApiClient();
 	
-	//@Test
+	@Test
 	public void testGet() throws ClientProtocolException, IOException {
-		HttpResponse response = apiClient.httpExecute("https://reqres.in", null, ApiMethod.GET, "/api/users?page=2", null, null, null, null, null, null);
-		System.out.println("done da");
+		Map<String, String> queryParams = new HashMap<String, String>();
+		queryParams.put("page", "2");
+		Map<String, String> pathParam = new HashMap<String, String>();
+		pathParam.put("mpath1", "api");
+		//HttpResponse response = apiClient.httpExecute("reqres.in", null, ApiMethod.GET, "/{mpath1}/users", pathParam, queryParams, null, null, null, null);
+		HttpResponse response = apiClient.httpExecute("http://reqres.in", null, ApiMethod.GET, "/{mpath1}/users?", pathParam, queryParams, null, null, null, BodyType.APPLICATION_JSON);
+		//System.out.println("done da");
 		System.out.println("Response is:"+ EntityUtils.toString(response.getEntity()));
 	}
 	
 	//@Test
 	public void testPost() throws ClientProtocolException, IOException {
 		User user = new User();
-		user.setName("Ramu");
+		user.setName("RamuRam");
 		user.setJob("HR");
-		ObjectMapper objectMapper = new ObjectMapper();
-		String stringEntity = objectMapper.writeValueAsString(user);
-		User responseUser = apiClient.httpExecute("https://reqres.in", null, ApiMethod.POST, "/api/users?page=2", null, null, stringEntity, null, User.class);
+		//ObjectMapper objectMapper = new ObjectMapper();
+		//String stringEntity = objectMapper.writeValueAsString(user);
+		Map<String, String> pathParam = new HashMap<String, String>();
+		pathParam.put("mpath1", "api");
+		
+		User responseUser = apiClient.httpExecute("https://reqres.in", null, ApiMethod.POST, "/{mpath1}/users", pathParam, null, null, BodyType.APPLICATION_JSON, BodyType.APPLICATION_JSON, user, User.class);
+		//User responseUser = apiClient.httpExecute("https://reqres.in", null, ApiMethod.POST, "/api/users?page=2", null, null, stringEntity, null, User.class);
 		System.out.println("done da");
+		System.out.println("Response is:"+ responseUser.getName());
 		System.out.println("Response is:"+ responseUser.getId());
 		System.out.println("Response is:"+ responseUser.getCreatedAt());
 	}
 	
-	@Test
+	//@Test
 	public void testMultiPart() throws ParseException, IOException {
 		Map<String, Object> multipartForm = new HashMap<String, Object>();
 		multipartForm.put("key1", "value1");

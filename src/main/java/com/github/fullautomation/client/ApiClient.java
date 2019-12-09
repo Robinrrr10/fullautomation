@@ -5,9 +5,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -29,35 +31,33 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class ApiClient {
 	
 	Logger log = LogManager.getLogger(getClass());
 	
-	/**
-	 * 
-	 * @param hostName
-	 * @param headers
-	 * @param method
-	 * @param endPoint
-	 * @param pathParams
-	 * @param queryParams
-	 * @param payload
-	 * @param multipartForm
-	 * @return
-	 * @throws ClientProtocolException
-	 * @throws IOException
-	 */
 	public HttpResponse httpExecute(String hostName, Map<String, String> headers, ApiMethod method, String endPoint, Map<String, String> pathParams , Map<String, String> queryParams, String payload, Map<String, Object> form, BodyType contentType, BodyType accept) throws ClientProtocolException, IOException {
 		
 		log.info("Http Request");
 		
 		HttpResponse httpResponse = null;
 		HttpClient client = HttpClients.createDefault();
-		//have to replace pathparam in endpoint
+		
+		if(endPoint != null && pathParams != null && pathParams.size() > 0) {
+			for(Map.Entry<String, String> pathParam : pathParams.entrySet()) {
+				endPoint = endPoint.replace("{"+pathParam.getKey()+"}", pathParam.getValue());
+			}
+		}
+		
 		String uri = hostName;
 		if(endPoint != null)
 			uri = uri + endPoint;
+		
+		if(headers == null && contentType != null) {
+			headers = new HashMap<String, String>();
+			headers.put("Content-Type", contentType.getValue());
+		}
 		
 		if(queryParams != null && queryParams.size() > 0) {
 			uri = uri + "?";
@@ -67,11 +67,6 @@ public class ApiClient {
 				uri = uri + param.getKey() + "=" + param.getValue();
 			}
 		}
-		
-		
-		//requestType
-		//List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
-		//UrlEncodedFormEntity urlEncodedForm = new UrlEncodedFormEntity(nameValuePair);
 		
 		switch(method) {
 		case GET:{
@@ -156,28 +151,73 @@ public class ApiClient {
 		return httpResponse;
 	}
 	
-	/**
-	 * 
-	 * @param <T>
-	 * @param hostName
-	 * @param header
-	 * @param method
-	 * @param endPoint
-	 * @param pathParam
-	 * @param queryParam
-	 * @param payload
-	 * @param multiPart
-	 * @param className
-	 * @return
-	 * @throws ParseException
-	 * @throws IOException
-	 */
-	public <T> T httpExecute(String hostName, Map<String, String> header, ApiMethod method, String endPoint, Map<String, String> pathParam, Map<String, String> queryParam, String payload, Map<String, Object> form, Class<T> className) throws ParseException, IOException {
-		HttpResponse httpResponse = this.httpExecute(hostName, header, method, endPoint, pathParam, queryParam, payload, form, null, null);
+
+	public <T> T httpExecute(String hostName, Map<String, String> header, ApiMethod method, String endPoint, Map<String, String> pathParam, Map<String, String> queryParam, String payload, Map<String, Object> form, BodyType contentType, BodyType accept ,Class<T> responseClassName) throws ParseException, IOException {
+		
+		HttpResponse httpResponse = this.httpExecute(hostName, header, method, endPoint, pathParam, queryParam, payload, form, contentType, accept);
+		
+		String responseContentType = null;
+		Header[] headers = httpResponse.getHeaders("Content-Type");
+		responseContentType = headers[0].getValue();
+		
 		HttpEntity httpResponseEntity = httpResponse.getEntity();
 		String stringBody = EntityUtils.toString(httpResponseEntity);
-		ObjectMapper objectMapper = new ObjectMapper();
-		T t = objectMapper.readValue(stringBody, className);
+		
+		T t = null ;
+		
+		if(responseContentType != null && responseContentType.contains("json")) {
+			ObjectMapper objectMapper = new ObjectMapper();	
+			t = objectMapper.readValue(stringBody, responseClassName);
+		}else if(responseContentType != null && responseContentType.contains("xml")) {
+			XmlMapper xmlMapper = new XmlMapper();
+			t = xmlMapper.readValue(stringBody, responseClassName);
+		}
+		return t;
+	}
+	
+	//public HttpResponse httpExecute(String hostName, Map<String, String> header, ApiMethod method, String endPoint, Map<String, String> pathParam, Map<String, String> queryParam, Map<String, Object> form, BodyType contentType, BodyType accept, Object payload) throws ParseException, IOException {
+	public <T> HttpResponse httpExecute(String hostName, Map<String, String> header, ApiMethod method, String endPoint, Map<String, String> pathParam, Map<String, String> queryParam, T payload,  BodyType contentType, BodyType accept, Map<String, Object> form) throws ParseException, IOException {
+		String stringEntity = null;
+		if(contentType != null && contentType == BodyType.APPLICATION_JSON) {
+			ObjectMapper objectMapper = new ObjectMapper();
+			stringEntity = objectMapper.writeValueAsString(payload);
+		}else if(contentType != null && contentType == BodyType.APPLICATION_XML) {
+			XmlMapper xmlMapper = new XmlMapper();
+			stringEntity = xmlMapper.writeValueAsString(payload);
+		}
+		HttpResponse httpResponse = this.httpExecute(hostName, header, method, endPoint, pathParam, queryParam, stringEntity, form, contentType, accept);
+		return httpResponse;
+	}
+	
+	public <T> T httpExecute(String hostName, Map<String, String> header, ApiMethod method, String endPoint, Map<String, String> pathParam, Map<String, String> queryParam, Map<String, Object> form, BodyType contentType, BodyType accept ,T payload, Class<T> responseClassName) throws ParseException, IOException {
+		
+		String stringEntity = null;
+		if(contentType != null && contentType == BodyType.APPLICATION_JSON) {
+			ObjectMapper objectMapper = new ObjectMapper();
+			stringEntity = objectMapper.writeValueAsString(payload);
+		}else if(contentType != null && contentType == BodyType.APPLICATION_XML) {
+			XmlMapper xmlMapper = new XmlMapper();
+			stringEntity = xmlMapper.writeValueAsString(payload);
+		}
+		
+		HttpResponse httpResponse = this.httpExecute(hostName, header, method, endPoint, pathParam, queryParam, stringEntity, form, contentType, accept);
+		
+		String responseContentType = null;
+		Header[] headers = httpResponse.getHeaders("Content-Type");
+		responseContentType = headers[0].getValue();
+		
+		HttpEntity httpResponseEntity = httpResponse.getEntity();
+		String stringBody = EntityUtils.toString(httpResponseEntity);
+		
+		T t = null ;
+		
+		if(responseContentType != null && responseContentType.contains("json")) {
+			ObjectMapper objectMapper = new ObjectMapper();	
+			t = objectMapper.readValue(stringBody, responseClassName);
+		}else if(responseContentType != null && responseContentType.contains("xml")) {
+			XmlMapper xmlMapper = new XmlMapper();
+			t = xmlMapper.readValue(stringBody, responseClassName);
+		}
 		return t;
 	}
 	
